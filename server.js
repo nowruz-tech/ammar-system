@@ -8,6 +8,9 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust proxy - Render.com üçin
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(cors({
     origin: true,
@@ -22,7 +25,7 @@ app.use(session({
         maxAge: 24 * 60 * 60 * 1000, // 24 sagat
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+        sameSite: 'lax'
     }
 }));
 app.use(express.static(__dirname));
