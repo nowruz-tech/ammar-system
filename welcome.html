@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="tk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ammar Ulgamy - Giriş</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .welcome-container {
+            max-width: 600px;
+            margin: 100px auto;
+            text-align: center;
+        }
+        .role-card {
+            background: white;
+            padding: 40px;
+            margin: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .role-card h2 {
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+        .role-card p {
+            color: #666;
+            font-size: 16px;
+        }
+        .admin-card {
+            border: 3px solid #667eea;
+        }
+        .user-card {
+            border: 3px solid #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="welcome-container">
+            <h1>🏪 Ammar Dolandyryş Ulgamy</h1>
+            <p style="color: #666; margin-bottom: 40px;">Rolunuzy saýlaň:</p>
+
+            <div class="role-card admin-card" onclick="window.location.href='admin.html'">
+                <h2>👨‍💼 Ammarçy (Admin)</h2>
+                <p>Harytlary goşmak, çykarmak we dolandyrmak</p>
+                <p style="margin-top: 10px; font-weight: bold; color: #667eea;">Doly erkin ➜</p>
+            </div>
+
+            <div class="role-card user-card" onclick="window.location.href='view.html'">
+                <h2>👁️ Ulanyjy (Görmek)</h2>
+                <p>Diňe ammardaky harytlara göz aýlamak</p>
+                <p style="margin-top: 10px; font-weight: bold; color: #4CAF50;">Diňe okalyş ➜</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

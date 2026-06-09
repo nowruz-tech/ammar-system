@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="tk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ammar Maglumat - Görüş</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .read-only-notice {
+            background: #2196F3;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .refresh-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .refresh-btn:hover {
+            background: #45a049;
+        }
+        .stock-alert {
+            background: #ff9800;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="background: #4CAF50; color: white; padding: 15px; text-align: center; margin-bottom: 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: bold;">👁️ ULANYJY REŽIMI (Diňe görüş)</div>
+            <a href="admin.html" style="background: white; color: #4CAF50; padding: 8px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">👨‍💼 Ammarçy režimi</a>
+        </div>
+
+        <h1>📦 Ammar Maglumat</h1>
+
+        <div class="read-only-notice">
+            👁️ DIŇE GÖRÜŞ REŽIMI - Maglumatlar real wagtda täzelenýär
+        </div>
+
+        <button onclick="loadDataFromServer()" class="refresh-btn">🔄 Täzelemek</button>
+
+        <div class="filter-box">
+            <input type="text" id="gozlegInput" placeholder="🔍 Haryt gözle...">
+        </div>
+
+        <div id="lowStockAlert" class="stock-alert" style="display:none;">
+            ⚠️ Käbir harytlaryň mukdary az!
+        </div>
+
+        <table id="hasabatTable">
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Haryt Ady</th>
+                    <th>Galan Mukdar</th>
+                    <th>Jemi Gelen</th>
+                    <th>Jemi Çykan</th>
+                    <th>Soňky Üýtgeşme</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="hasabatBody">
+            </tbody>
+        </table>
+
+        <div style="margin-top: 30px; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+            <h3>📊 Umumy statistika</h3>
+            <div id="statistika" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let ammarData = {};
+
+        // Sahypa ýüklenende
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDataFromServer();
+            // Her 30 sekuntda awtomatik täzelemek
+            setInterval(loadDataFromServer, 30000);
+        });
+
+        // Serverden maglumatlary ýüklemek
+        async function loadDataFromServer() {
+            try {
+                const response = await fetch(`${API_URL}/harytlar`);
+                if (response.ok) {
+                    ammarData = await response.json();
+                    updateHasabat();
+                    updateStatistika();
+                } else {
+                    showError('⚠️ Server bilen baglanyşyk mesele!');
+                }
+            } catch (error) {
+                showError('❌ Server işlemeýär!');
+                console.error('Server ýalňyşlygy:', error);
+            }
+        }
+
+        // Hasabat tablisyny täzelemek
+        function updateHasabat() {
+            const tbody = document.getElementById('hasabatBody');
+            tbody.innerHTML = '';
+
+            let index = 1;
+            let lowStockCount = 0;
+
+            Object.keys(ammarData).sort().forEach(harytAdy => {
+                const data = ammarData[harytAdy];
+                const row = document.createElement('tr');
+
+                const isLowStock = data.galanMukdar < (data.jemiGelen * 0.2);
+                if (isLowStock) {
+                    row.classList.add('low-stock');
+                    lowStockCount++;
+                }
+
+                const statusIcon = isLowStock ? '⚠️ Az' : '✅ Ýeterlik';
+
+                row.innerHTML = `
+                    <td>${index++}</td>
+                    <td><strong>${harytAdy}</strong></td>
+                    <td><strong style="font-size: 18px;">${data.galanMukdar.toFixed(2)}</strong> ${data.birlik}</td>
+                    <td>${data.jemiGelen.toFixed(2)} ${data.birlik}</td>
+                    <td>${data.jemiCykan.toFixed(2)} ${data.birlik}</td>
+                    <td>${data.sonkyUytgesme}</td>
+                    <td>${statusIcon}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            if (Object.keys(ammarData).length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 30px;">Heniz hiç zat goşulmadyk</td></tr>';
+            }
+
+            // Az galan harytlar barada duýduryş
+            const alertBox = document.getElementById('lowStockAlert');
+            if (lowStockCount > 0) {
+                alertBox.textContent = `⚠️ ${lowStockCount} harydyň mukdary az!`;
+                alertBox.style.display = 'block';
+            } else {
+                alertBox.style.display = 'none';
+            }
+        }
+
+        // Statistika
+        function updateStatistika() {
+            const statsDiv = document.getElementById('statistika');
+            const harytSany = Object.keys(ammarData).length;
+
+            let jemiMukdar = 0;
+            let azHarytlar = 0;
+
+            Object.values(ammarData).forEach(data => {
+                jemiMukdar += data.galanMukdar;
+                if (data.galanMukdar < (data.jemiGelen * 0.2)) {
+                    azHarytlar++;
+                }
+            });
+
+            statsDiv.innerHTML = `
+                <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 32px; font-weight: bold; color: #667eea;">${harytSany}</div>
+                    <div style="color: #666;">Jemi haryt görnüşi</div>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 32px; font-weight: bold; color: #4CAF50;">${jemiMukdar.toFixed(0)}</div>
+                    <div style="color: #666;">Jemi mukdar</div>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 32px; font-weight: bold; color: ${azHarytlar > 0 ? '#ff9800' : '#4CAF50'};">${azHarytlar}</div>
+                    <div style="color: #666;">Az galan harytlar</div>
+                </div>
+            `;
+        }
+
+        // Gözleg funksiýasy
+        document.getElementById('gozlegInput').addEventListener('input', function() {
+            const filter = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#hasabatBody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        function showError(message) {
+            const statsDiv = document.getElementById('statistika');
+            statsDiv.innerHTML = `<div style="background: #f44336; color: white; padding: 20px; border-radius: 8px; grid-column: 1/-1;">${message}</div>`;
+        }
+    </script>
+</body>
+</html>

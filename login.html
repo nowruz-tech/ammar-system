@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="tk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Giriş</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .login-header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .login-header p {
+            color: #666;
+        }
+        .error-message {
+            background: #f44336;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>🔐 Admin Giriş</h1>
+            <p>Ammarçy üçin giriş</p>
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Login:</label>
+                <input type="text" id="username" required autofocus>
+            </div>
+            <div class="form-group">
+                <label>Parol:</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-success" style="width: 100%; margin-top: 10px;">
+                🔓 Girmek
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="view.html" style="color: #667eea; text-decoration: none;">
+                👁️ Ulanyjy režimi (giriş gerek däl)
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMessage');
+
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Üstünlikli giriş
+                    window.location.href = 'admin.html';
+                } else {
+                    // Ýalňyş login/parol
+                    errorDiv.textContent = '❌ ' + (data.error || 'Login ýa-da parol nädogry!');
+                    errorDiv.classList.add('show');
+
+                    setTimeout(() => {
+                        errorDiv.classList.remove('show');
+                    }, 3000);
+                }
+            } catch (error) {
+                errorDiv.textContent = '❌ Server bilen baglanyşyk ýok!';
+                errorDiv.classList.add('show');
+                console.error('Ýalňyşlyk:', error);
+            }
+        });
+    </script>
+</body>
+</html>

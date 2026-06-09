@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="tk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ammar Dolandyryş Programmasy</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div style="background: #667eea; color: white; padding: 15px; text-align: center; margin-bottom: 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: bold;">👨‍💼 AMMARÇY REŽIMI (Doly erkin)</div>
+            <div>
+                <a href="view.html" style="background: white; color: #667eea; padding: 8px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-right: 10px;">👁️ Ulanyjy režimi</a>
+                <button onclick="logout()" style="background: #f44336; color: white; padding: 8px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">🚪 Çykmak</button>
+            </div>
+        </div>
+
+        <h1>🏪 Ammar Dolandyryş Programmasy</h1>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('gelen')">📥 Gelen Harytlar</button>
+            <button class="tab-btn" onclick="showTab('cykarys')">📤 Çykaryş</button>
+            <button class="tab-btn" onclick="showTab('hasabat')">📊 Hasabat</button>
+        </div>
+
+        <!-- Gelen Harytlar Bölümi -->
+        <div id="gelen" class="tab-content active">
+            <h2>Gelen Harytlary Giriziň</h2>
+            <form id="gelenForm">
+                <div class="form-group">
+                    <label>Haryt Ady:</label>
+                    <input type="text" id="gelenHarytAdy" required>
+                </div>
+                <div class="form-group">
+                    <label>Mukdary:</label>
+                    <input type="number" id="gelenMukdar" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Ölçeg Birligi:</label>
+                    <select id="gelenBirlik">
+                        <option value="sany">sany</option>
+                        <option value="kg">kg</option>
+                        <option value="litr">litr</option>
+                        <option value="metr">metr</option>
+                        <option value="guty">guty</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Senesi:</label>
+                    <input type="date" id="gelenSene" required>
+                </div>
+                <button type="submit" class="btn btn-success">✅ Goş</button>
+            </form>
+        </div>
+
+        <!-- Çykaryş Bölümi -->
+        <div id="cykarys" class="tab-content">
+            <h2>Ammardan Haryt Al</h2>
+            <form id="cykarysForm">
+                <div class="form-group">
+                    <label>Haryt Saýla:</label>
+                    <select id="cykarysHaryt" required>
+                        <option value="">-- Haryt saýlaň --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Alynýan Mukdary:</label>
+                    <input type="number" id="cykarysMukdar" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Senesi:</label>
+                    <input type="date" id="cykarysSene" required>
+                </div>
+                <div id="galanMukdarInfo" class="info-box"></div>
+                <button type="submit" class="btn btn-danger">📤 Çykar</button>
+            </form>
+        </div>
+
+        <!-- Hasabat Bölümi -->
+        <div id="hasabat" class="tab-content">
+            <h2>Ammar Hasabaty</h2>
+            <div class="filter-box">
+                <input type="text" id="gozlegInput" placeholder="🔍 Haryt gözle...">
+                <button onclick="exportData()" class="btn btn-info">📥 Export</button>
+                <button onclick="clearAllData()" class="btn btn-warning">🗑️ Ählisini Arassala</button>
+            </div>
+            <table id="hasabatTable">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Haryt Ady</th>
+                        <th>Galan Mukdar</th>
+                        <th>Jemi Gelen</th>
+                        <th>Jemi Çykan</th>
+                        <th>Soňky Üýtgeşme</th>
+                        <th>Hereket</th>
+                    </tr>
+                </thead>
+                <tbody id="hasabatBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
