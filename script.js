@@ -1,5 +1,7 @@
-// API URL (Serveriň adresi)
-const API_URL = 'http://localhost:3000/api';
+// API URL - dinamiki (production we local üçin)
+const API_URL = window.location.hostname === 'localhost'
+    ? 'http://localhost:3000/api'
+    : '/api';
 
 // Maglumatlary saklamak
 let ammarData = {};
